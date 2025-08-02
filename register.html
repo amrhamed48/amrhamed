@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب جديد</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .register-container {
+            max-width: 400px;
+            margin: 80px auto;
+            background: linear-gradient(rgba(24,24,24,0.95), rgba(24,24,24,0.95)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80') center/cover no-repeat;
+            border-radius: 18px;
+            box-shadow: 0 2px 24px #0004;
+            border: 1.5px solid #ffd70033;
+            padding: 40px 30px 30px 30px;
+            color: #fffbe6;
+            text-align:center;
+        }
+        .register-container h2 {
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .register-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffd700;
+            font-weight: bold;
+            text-align:right;
+        }
+        .register-container input {
+            width: 100%;
+            margin-bottom: 18px;
+            padding: 12px;
+            border: 1.5px solid #ffd70099;
+            border-radius: 7px;
+            background: #181818;
+            color: #fffbe6;
+            font-size: 1em;
+        }
+        .register-container input:focus {
+            border: 1.5px solid #ffd700;
+            outline: none;
+        }
+        .register-container button {
+            width: 100%;
+            background: linear-gradient(90deg, #ffd700 60%, #181818 100%);
+            color: #181818;
+            border: none;
+            padding: 13px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 1.08em;
+            font-weight: bold;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 1px 8px #0002;
+        }
+        .register-container button:hover {
+            background: linear-gradient(90deg, #181818 60%, #ffd700 100%);
+            color: #ffd700;
+        }
+        .register-container .success {
+            color: #00e676;
+            margin-bottom: 10px;
+        }
+        .register-container .error {
+            color: #ff5252;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>إنشاء حساب جديد</h2>
+        <form id="registerForm">
+            <label for="reg-username">الاسم الثلاثي</label>
+            <input type="text" id="reg-username" name="username" placeholder="مثال: أحمد محمد علي" required>
+            <label for="reg-password">رقم الهاتف (كلمة المرور)</label>
+            <input type="password" id="reg-password" name="password" placeholder="رقم الهاتف المكون من 11 رقم" required pattern="[0-9]{11,}">
+            <label for="reg-email">البريد الإلكتروني</label>
+            <input type="email" id="reg-email" name="email" required>
+            <button type="submit">إنشاء الحساب</button>
+        </form>
+        <div id="registerMsg"></div>
+    </div>
+    <script>
+    document.getElementById('registerForm').onsubmit = function(e) {
+        e.preventDefault();
+        var username = document.getElementById('reg-username').value.trim();
+        var password = document.getElementById('reg-password').value.trim();
+        var email = document.getElementById('reg-email').value.trim();
+        var msg = document.getElementById('registerMsg');
+        // تحقق من الاسم الثلاثي
+        if(username.split(' ').length < 3) {
+            msg.innerHTML = '<div class="error">يرجى إدخال الاسم الثلاثي (ثلاثة أسماء على الأقل)</div>';
+            return;
+        }
+        // تحقق من رقم الهاتف
+        if(!/^\d{11,}$/.test(password)) {
+            msg.innerHTML = '<div class="error">كلمة المرور يجب أن تكون رقم هاتف مكون من 11 رقم على الأقل</div>';
+            return;
+        }
+        var users = JSON.parse(localStorage.getItem('users') || '[]');
+        if(users.find(u => u.username === username)) {
+            msg.innerHTML = '<div class="error">الاسم مستخدم بالفعل</div>';
+            return;
+        }
+        users.push({username, password, email});
+        localStorage.setItem('users', JSON.stringify(users));
+        msg.innerHTML = '<div class="success">تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن.</div>';
+        document.getElementById('registerForm').reset();
+    };
+    </script>
+</body>
+</html>
